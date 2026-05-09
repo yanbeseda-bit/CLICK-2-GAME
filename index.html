@@ -119,4 +119,70 @@
     // ФУНКЦИЯ СОКРАЩЕНИЯ ЧИСЕЛ (1k, 1M, 1B)
     function format(num) {
         if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
-        if (num
+        if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+        return Math.floor(num);
+    }
+
+    // --- 1. ЛОГИКА КЛИКА ---
+    document.getElementById('clickBtn').onclick = function() {
+        Click = Click + (clickPower * multiplier);
+        updateUI();
+    };
+
+    // --- 2. УЛУЧШЕНИЕ 1 ---
+    document.getElementById('upg1').onclick = function() {
+        if (Click >= upg1Price) {
+            Click -= upg1Price;
+            clickPower += 1;
+            upg1Price = Math.floor(upg1Price * 1.5); 
+            this.innerHTML = "Улучшение +1 (Цена: " + format(upg1Price) + ")";
+            updateUI();
+        }
+    };
+
+    // --- 3. УЛУЧШЕНИЕ 2 ---
+    document.getElementById('upg2').onclick = function() {
+        if (Click >= upg2Price) {
+            Click -= upg2Price;
+            clickPower += 5;
+            upg2Price = Math.floor(upg2Price * 1.8);
+            this.innerHTML = "Улучшение +5 (Цена: " + format(upg2Price) + ")";
+            updateUI();
+        }
+    };
+
+    // --- 4. РЕБИРТ ---
+    document.getElementById('rebBtn').onclick = function() {
+        if (Click >= rebirthPrice) {
+            Click = 0;
+            clickPower = 1;
+            rebirths += 1;
+            multiplier *= 2;
+            rebirthPrice *= 10; // Увеличиваем цену ребирта в 10 раз
+            
+            // Сброс цен в магазине (по желанию)
+            upg1Price = 10;
+            upg2Price = 100;
+            document.getElementById('upg1').innerHTML = "Улучшение +1 (Цена: 10)";
+            document.getElementById('upg2').innerHTML = "Улучшение +5 (Цена: 100)";
+            
+            this.innerHTML = "РЕБИРТ (Цена: " + format(rebirthPrice) + ")<br><small>Умножает доход х2</small>";
+            updateUI();
+        } else {
+            alert("Нужно " + format(rebirthPrice) + " очков!");
+        }
+    };
+
+    function updateUI() {
+        display.innerText = format(Click);
+        pwrDisplay.innerText = format(clickPower);
+        rebDisplay.innerText = rebirths;
+        multDisplay.innerText = multiplier;
+    }
+
+    // Запускаем обновление при загрузке, чтобы k, M, B применились сразу
+    updateUI();
+</script>
+</body>
+</html>
