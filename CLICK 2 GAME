@@ -1,0 +1,12 @@
+<h1>Очков:<span id="count">0</span></h1>
+<button id="clickBtn">Кликни меня!</button>
+<script>
+let score=0;
+const display = document.getElementById('count');
+const button = document.getElementById('clickBtn');
+
+button.onclick=function() {
+score= score +1;
+display.innerText = score;
+};
+</script>
