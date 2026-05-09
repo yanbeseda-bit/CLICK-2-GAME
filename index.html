@@ -5,14 +5,59 @@
             background-color: #000080; 
             color: white; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: center; 
-            padding-top: 30px;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* Запрет синего выделения при кликах */
+            user-select: none; 
+            -webkit-user-select: none;
         }
+
+        /* Верхняя панель со статистикой */
+        .stat-box { 
+            font-size: 20px; 
+            background: rgba(0,0,0,0.3); 
+            padding: 15px; 
+            border-bottom: 2px solid white;
+            text-align: center;
+        }
+
+        /* Основной контейнер (центр и бока) */
+        .game-container {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Центральная зона (Клик и Ребирт под ним) */
+        .center-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        /* Правая зона (Магазин) */
+        .shop-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 280px;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        /* Стили кнопок */
         button { 
             padding: 15px 25px; 
             font-size: 18px; 
             cursor: pointer; 
-            margin: 10px;
             border-radius: 12px;
             border: 2px solid white;
             transition: 0.2s;
@@ -20,33 +65,39 @@
         button:hover { transform: scale(1.05); }
         button:active { transform: scale(0.95); }
 
-        #clickBtn { background-color: #00ff00; color: black; width: 200px; height: 100px; font-size: 24px; }
-        .shop-btn { background-color: #ffffff; color: black; }
-        .rebirth-btn { background-color: #ff4500; color: white; }
-        
-        .stat-box { font-size: 20px; background: rgba(0,0,0,0.3); display: inline-block; padding: 15px; border-radius: 10px; }
+        #clickBtn { 
+            background-color: #00ff00; 
+            color: black; 
+            width: 220px; 
+            height: 110px; 
+            font-size: 28px; 
+            font-weight: bold;
+        }
+        .shop-btn { background-color: #ffffff; color: black; font-size: 16px; }
+        .rebirth-btn { background-color: #ff4500; color: white; width: 220px; }
     </style>
 </head>
 <body>
 
     <div class="stat-box">
         <h1>Клик: <span id="Click">0</span></h1>
-        <div>Сила клика: <span id="pwr">1</span></div>
-        <div>Множитель Ребирта: x<span id="mult">1</span></div>
-        <div>Ребирты: <span id="reb">0</span></div>
+        <div>Сила клика: <span id="pwr">1</span> | Множитель: x<span id="mult">1</span> | Ребирты: <span id="reb">0</span></div>
     </div>
     
-    <br><br>
-    <button id="clickBtn">КЛИК!</button>
+    <div class="game-container">
+        <div style="width: 280px;"></div>
 
-    <hr>
-    <h2>Магазин улучшений</h2>
-    <button id="upg1" class="shop-btn">Улучшение +1 (Цена: 10)</button>
-    <button id="upg2" class="shop-btn">Улучшение +5 (Цена: 100)</button>
-    
-    <hr>
-    <h2>Перерождение</h2>
-    <button id="rebBtn" class="rebirth-btn">РЕБИРТ (Цена: 1000)<br><small>Умножает доход х2</small></button>
+        <div class="center-area">
+            <button id="clickBtn">КЛИК!</button>
+            <button id="rebBtn" class="rebirth-btn">РЕБИРТ (Цена: 1k)<br><small>Умножает доход х2</small></button>
+        </div>
+
+        <div class="shop-area">
+            <h2>Магазин</h2>
+            <button id="upg1" class="shop-btn">Улучшение +1 (Цена: 10)</button>
+            <button id="upg2" class="shop-btn">Улучшение +5 (Цена: 100)</button>
+        </div>
+    </div>
 
 <script>
     // --- ПЕРЕМЕННЫЕ ИГРЫ ---
@@ -55,7 +106,6 @@
     let rebirths = 0;
     let multiplier = 1;
 
-    // Цены (можешь менять начальные значения здесь)
     let upg1Price = 10;
     let upg2Price = 100;
     let rebirthPrice = 1000;
@@ -66,70 +116,7 @@
     const rebDisplay = document.getElementById('reb');
     const multDisplay = document.getElementById('mult');
 
-    // --- 1. ЛОГИКА КЛИКА ---
-    document.getElementById('clickBtn').onclick = function() {
-        // Формула: (Сила клика) * (2 в степени количества ребиртов)
-        Click = Click + (clickPower * multiplier);
-        updateUI();
-    };
-
-    // --- 2. УЛУЧШЕНИЕ 1 (+1 к силе) ---
-    document.getElementById('upg1').onclick = function() {
-        if (Click >= upg1Price) {
-            Click -= upg1Price;
-            clickPower += 1;
-            
-            // Увеличиваем цену в 1.5 раза (можешь поменять на 2)
-            upg1Price = Math.floor(upg1Price * 1.5); 
-            this.innerHTML = "Улучшение +1 (Цена: " + upg1Price + ")";
-            updateUI();
-        }
-    };
-
-    // --- 3. УЛУЧШЕНИЕ 2 (+5 к силе) ---
-    document.getElementById('upg2').onclick = function() {
-        if (Click >= upg2Price) {
-            Click -= upg2Price;
-            clickPower += 5;
-            
-            // Увеличиваем цену в 1.8 раза
-            upg2Price = Math.floor(upg2Price * 1.8);
-            this.innerHTML = "Улучшение +5 (Цена: " + upg2Price + ")";
-            updateUI();
-        }
-    };
-
-    // --- 4. РЕБИРТ (УМНОЖЕНИЕ Х2) ---
-    document.getElementById('rebBtn').onclick = function() {
-        if (Click >= rebirthPrice) {
-            Click = 0;           // Сброс очков
-            clickPower = 1;      // Сброс силы клика (по желанию можно убрать)
-            rebirths += 1;       // +1 к счетчику
-            multiplier *= 2;     // УМНОЖАЕМ МНОЖИТЕЛЬ НА 2
-            
-            // Увеличиваем цену ребирта в 5 раз для баланса
-            rebirthPrice *= 5; 
-            
-            // Сбрасываем цены улучшений к начальным (опционально)
-            upg1Price = 10;
-            upg2Price = 100;
-            document.getElementById('upg1').innerHTML = "Улучшение +1 (Цена: 10)";
-            document.getElementById('upg2').innerHTML = "Улучшение +5 (Цена: 100)";
-            
-            this.innerHTML = "РЕБИРТ (Цена: " + rebirthPrice + ")<br><small>Умножает доход х2</small>";
-            updateUI();
-        } else {
-            alert("Нужно " + rebirthPrice + " очков!");
-        }
-    };
-
-    // --- ФУНКЦИЯ ОБНОВЛЕНИЯ ЭКРАНА ---
-    function updateUI() {
-        display.innerText = Math.floor(Click);
-        pwrDisplay.innerText = clickPower;
-        rebDisplay.innerText = rebirths;
-        multDisplay.innerText = multiplier;
-    }
-</script>
-</body>
-</html>
+    // ФУНКЦИЯ СОКРАЩЕНИЯ ЧИСЕЛ (1k, 1M, 1B)
+    function format(num) {
+        if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
+        if (num
